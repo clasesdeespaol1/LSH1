@@ -1,79 +1,93 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot con ChatGPT</title>
+    <title>Spanish Learning Chatbot</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 20px;
+            background-color: #f4f4f4;
         }
-        #chatbox {
-            width: 80%;
-            max-width: 400px;
-            height: 300px;
-            border: 1px solid #ccc;
-            overflow-y: auto;
+        .chat-container {
+            width: 300px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 10px;
-            margin: auto;
+        }
+        .chat-box {
+            height: 250px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+            padding: 5px;
             text-align: left;
         }
-        input, button {
-            margin-top: 10px;
-            padding: 10px;
+        .user-message {
+            color: blue;
+        }
+        .bot-message {
+            color: green;
+        }
+        .input-container {
+            display: flex;
+        }
+        input {
+            flex: 1;
+            padding: 5px;
+        }
+        button {
+            padding: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <h2>Chatbot con ChatGPT</h2>
-    <div id="chatbox"></div>
-    <input type="text" id="mensaje" placeholder="Escribe un mensaje..." />
-    <button onclick="enviarMensaje()">Enviar</button>
+    <h1>Welcome to our Spanish Learning Chatbot</h1>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 
     <script>
-        async function enviarMensaje() {
-            let userMessage = document.getElementById("mensaje").value;
-            let chatbox = document.getElementById("chatbox");
+        function sendMessage() {
+            let inputField = document.getElementById("user-input");
+            let message = inputField.value;
+            if (message.trim() === "") return;
 
-            if (userMessage.trim() === "") return; 
-            
-            chatbox.innerHTML += "<p><strong>Tú:</strong> " + userMessage + "</p>";
-            document.getElementById("mensaje").value = ""; 
+            let chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML += `<p class='user-message'><strong>You:</strong> ${message}</p>`;
+            inputField.value = "";
 
-            try {
-                let response = await fetch(curl https://api.openai.com/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer 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" \
-  -d '{
-    "model": "gpt-4o-mini",
-    "store": true,
-    "messages": [
-      {"role": "user", "content": "write a haiku about ai"}
-    ]
-  }'
-", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer TU_API_KEY" 
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-4",
-                        messages: [{ role: "user", content: userMessage }]
-                    })
-                });
+            setTimeout(() => {
+                let botResponse = getBotResponse(message);
+                chatBox.innerHTML += `<p class='bot-message'><strong>Bot:</strong> ${botResponse}</p>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000);
+        }
 
-                let data = await response.json();
-                let botResponse = data.choices[0].message.content;
-
-                chatbox.innerHTML += "<p><strong>Bot:</strong> " + botResponse + "</p>";
-                chatbox.scrollTop = chatbox.scrollHeight; 
-            } catch (error) {
-                console.error("Error al conectar con OpenAI:", error);
-                chatbox.innerHTML += "<p style='color:red;'><strong>Error:</strong> No se pudo obtener respuesta.</p>";
-            }
+        function getBotResponse(input) {
+            let responses = {
+                "hello": "Hello! How can I help you?",
+                "how are you?": "I am a chatbot, but I'm here to assist you.",
+                "goodbye": "Goodbye! Hope to see you soon.",
+                "what teaching method do you use?": "Our classes follow an interactive and communicative methodology focused on developing comprehension and expression skills.",
+                "how long are the lessons?": "Each lesson lasts 60 minutes, and we recommend at least two sessions per week for steady progress.",
+                "how is my level determined?": "We conduct a free level assessment, including a written test and an oral interview, to place you in the most suitable course.",
+                "what materials do you use?": "We use textbooks, multimedia resources, current articles, and interactive exercises. All materials are provided digitally.",
+                "are classes individual or group?": "We offer both individual and group classes. Groups are limited to 6 students for personalized attention.",
+                "what technical requirements do I need?": "A stable internet connection, a computer or mobile device with a camera and microphone, and a Zoom or Skype account.",
+                "can I reschedule or cancel a class?": "Yes, you can reschedule or cancel with at least 24 hours' notice. Late cancellations may incur a charge.",
+                "do you provide certificates?": "Yes, upon successful completion, you receive a certificate aligned with the CEFR language framework.",
+                "what payment methods do you accept?": "We accept credit cards, PayPal, and bank transfers. Payment details are provided during enrollment.",
+                "can I try a class before enrolling?": "Absolutely! We offer a free trial class to experience our methodology before committing." 
+            };
+            return responses[input.toLowerCase()] || "I'm sorry, I don't understand that question.";
         }
     </script>
 </body>
