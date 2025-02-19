@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot con ChatGPT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #chatbox {
+            width: 80%;
+            max-width: 400px;
+            height: 300px;
+            border: 1px solid #ccc;
+            overflow-y: auto;
+            padding: 10px;
+            margin: auto;
+            text-align: left;
+        }
+        input, button {
+            margin-top: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Chatbot con ChatGPT</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="mensaje" placeholder="Escribe un mensaje..." />
+    <button onclick="enviarMensaje()">Enviar</button>
+
+    <script>
+        async function enviarMensaje() {
+            let userMessage = document.getElementById("mensaje").value;
+            let chatbox = document.getElementById("chatbox");
+
+            if (userMessage.trim() === "") return; 
+            
+            chatbox.innerHTML += "<p><strong>Tú:</strong> " + userMessage + "</p>";
+            document.getElementById("mensaje").value = ""; 
+
+            try {
+                let response = await fetch(curl https://api.openai.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer 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" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "store": true,
+    "messages": [
+      {"role": "user", "content": "write a haiku about ai"}
+    ]
+  }'
+", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer TU_API_KEY" 
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4",
+                        messages: [{ role: "user", content: userMessage }]
+                    })
+                });
+
+                let data = await response.json();
+                let botResponse = data.choices[0].message.content;
+
+                chatbox.innerHTML += "<p><strong>Bot:</strong> " + botResponse + "</p>";
+                chatbox.scrollTop = chatbox.scrollHeight; 
+            } catch (error) {
+                console.error("Error al conectar con OpenAI:", error);
+                chatbox.innerHTML += "<p style='color:red;'><strong>Error:</strong> No se pudo obtener respuesta.</p>";
+            }
+        }
+    </script>
+</body>
+</html>
